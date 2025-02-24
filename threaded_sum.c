@@ -45,5 +45,6 @@ int readFile(char file[], int numArray[])
 
 void *arraySum(void* a)
 {
+    
 
 }
