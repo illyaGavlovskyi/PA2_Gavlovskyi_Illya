@@ -20,7 +20,7 @@ typedef struct _thread_data_t
 } thread_data_t;
 
 int readFile(char file[], int numArray[]);
-void *arraySum(void* );
+void *arraySum(void* a);
 
 int main(int argc, char* argv[])
 {
@@ -29,10 +29,21 @@ int main(int argc, char* argv[])
 
 int readFile(char file[], int numArray[])
 {
-
+    FILE *openFile = fopen(file, "r");
+    if(!openFile)
+    {
+        return -1;
+    }
+    int num = 0;
+    while(fscanf(openFile, "%d", &numArray[num]) == 1)
+    {
+        num++;
+    }
+    fclose(openFile);
+    return num;
 }
 
-void *arraySum(void* )
+void *arraySum(void* a)
 {
 
 }
