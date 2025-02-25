@@ -1,3 +1,7 @@
+//Illya Gavlovskyi
+//CS 446
+//Febuary 27, 2025
+
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
@@ -9,6 +13,8 @@
 #include<sys/stat.h>
 #include<pthread.h>
 #include<sys/time.h>
+
+#define SIZE 1000000
 
 typedef struct _thread_data_t
 {
@@ -24,6 +30,43 @@ void *arraySum(void* a);
 
 int main(int argc, char* argv[])
 {
+    if (argc != 3)
+    {
+        printf("Not enough parameters.\n");
+        return -1;
+    }
+
+    int data[SIZE];
+    int sizeOfData = readFile(argv[1], data);
+    int numberOfThreads = atoi(argv[2]);
+
+    if(sizeOfData < numberOfThreads)
+    {
+        printf("Too many threads requeste\n");
+        return -1;
+    }
+
+    if(sizeOfData == -1)
+    {
+        return -1;
+    }
+
+    long long int totalSum = 0;
+    struct timeval startTime;
+    
+    gettimeofday(&startTime, NULL);
+
+    pthread_mutex_t m;
+    thread_data_t threadDatal[numberOfThreads];
+
+
+    for(int i = 0; i < ; i++)
+    {
+
+    }
+
+
+    
 
 }
 
