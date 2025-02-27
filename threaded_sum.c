@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 
     if(sizeOfData < numberOfThreads)
     {
-        printf("Too many threads requeste\n");
+        printf("Too many threads requeste.\n");
         return -1;
     }
 
@@ -52,22 +52,53 @@ int main(int argc, char* argv[])
     }
 
     long long int totalSum = 0;
-    struct timeval startTime;
-    
+
+    struct timeval startTime, endTime;
     gettimeofday(&startTime, NULL);
 
-    pthread_mutex_t m;
-    thread_data_t threadDatal[numberOfThreads];
+    pthread_mutex_t lock;
+    pthread_mutex_init(&lock, NULL);
 
+    thread_data_t threadData[numberOfThreads];
 
-    for(int i = 0; i < ; i++)
+    int sliceOfDataSize = sizeOfData / numberOfThreads;
+    int remainder = sizeOfData % numberOfThreads;
+
+    for(int i = 0; i < numberOfThreads; i++)
     {
+        threadData[i].data = data;
 
+        threadData[i].startInd = i * sliceOfDataSize;
+        if(i == (numberOfThreads - 1))
+        {
+            threadData[i].endInd = (((i + 1) * sliceOfDataSize) + remainder);
+        }
+        else
+        {
+            threadData[i].endInd = ((i + 1) * sliceOfDataSize);
+        }
+
+        threadData[i].lock = &lock;
+        threadData[i].totalSum = &totalSum;   
     }
 
+    pthread_t threads[numberOfThreads];
+    for(int i = 0; i < numberOfThreads; i++)
+    {
+        pthread_create(&threads[i], NULL, arraySum, &threadData[i]);
+    }
+    for(int i = 0; i < numberOfThreads; i++)
+    {
+        pthread_join(threads[i], NULL);
+    }
+    printf("Final sum: %lld\n", totalSum);
 
-    
+    gettimeofday(&endTime, NULL);
 
+    double totalTime = ((endTime.tv_sec - startTime.tv_sec) * 1000) + ((endTime.tv_usec - startTime.tv_usec) / 1000);
+    printf("Total time of execution: %lf\n", totalTime);
+
+    return 0;
 }
 
 int readFile(char file[], int numArray[])
@@ -88,6 +119,19 @@ int readFile(char file[], int numArray[])
 
 void *arraySum(void* a)
 {
-    
+    thread_data_t* inputData = (thread_data_t*)a;
+    long long int threadSum = 0;
 
+    for(int i = inputData->startInd; i < inputData->endInd; i++)
+    {
+        threadSum += inputData->data[i];
+    }
+
+    pthread_mutex_lock(inputData->lock);
+
+    *inputData->totalSum += threadSum;
+
+    pthread_mutex_unlock(inputData->lock);
+
+    return NULL;
 }
