@@ -62,16 +62,15 @@ int main(int argc, char* argv[])
     thread_data_t threadData[numberOfThreads];
 
     int sliceOfDataSize = sizeOfData / numberOfThreads;
-    int remainder = sizeOfData % numberOfThreads;
 
     for(int i = 0; i < numberOfThreads; i++)
     {
         threadData[i].data = data;
 
-        threadData[i].startInd = i * sliceOfDataSize;
+        threadData[i].startInd = (i * sliceOfDataSize);
         if(i == (numberOfThreads - 1))
         {
-            threadData[i].endInd = (((i + 1) * sliceOfDataSize) + remainder);
+            threadData[i].endInd = sizeOfData;
         }
         else
         {
@@ -95,8 +94,8 @@ int main(int argc, char* argv[])
 
     gettimeofday(&endTime, NULL);
 
-    double totalTime = ((endTime.tv_sec - startTime.tv_sec) * 1000) + ((endTime.tv_usec - startTime.tv_usec) / 1000);
-    printf("Total time of execution: %lf\n", totalTime);
+    float totalTime = ((endTime.tv_sec - startTime.tv_sec) * 1000.0) + ((endTime.tv_usec - startTime.tv_usec) / 1000.0);
+    printf("Total time of execution: %.4f millisecond.\n", totalTime);
 
     return 0;
 }
@@ -126,7 +125,6 @@ void *arraySum(void* a)
     {
         threadSum += inputData->data[i];
     }
-
     pthread_mutex_lock(inputData->lock);
 
     *inputData->totalSum += threadSum;
